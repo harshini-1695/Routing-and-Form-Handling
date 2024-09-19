@@ -3,9 +3,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { TextField, Button, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../components/authHelper';
 
 const Login = () => {
     const navigate = useNavigate(),
+        auth = useAuth(),
         validationSchema = Yup.object({
             email: Yup.string().required(),
             password: Yup.string().required()
@@ -13,8 +15,10 @@ const Login = () => {
         { register, handleSubmit, formState: { isValid } } = useForm({
             resolver: yupResolver(validationSchema),
         }),
-        onSubmit = () => {
-            navigate('/dashboard');
+        onSubmit = (data: any) => {
+            auth?.signin(data, () => {
+                navigate('/dashboard');
+            });
         };
     return (
         <Container maxWidth="xs">
